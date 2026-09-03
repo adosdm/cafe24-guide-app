@@ -89,35 +89,44 @@ export default function ComparePage() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}>비교하기 관리</h1>
-          <p style={{ color: "#666", fontSize: 14 }}>
-            카테고리 · 기기별로 비교 제품을 등록하고 관리합니다.
-          </p>
+          <h1 className="page-title">비교하기 관리</h1>
+          <p className="page-desc">카테고리 · 기기별로 비교 제품을 등록하고 관리합니다.</p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          <button
-            onClick={() => setShowSubcategoryModal(true)}
-            style={btnSecondary}
-          >
+          <button onClick={() => setShowSubcategoryModal(true)} className="btn btn-soft">
             서브카테고리 관리
           </button>
-          <button onClick={openCreate} style={btnPrimary}>
+          <button onClick={openCreate} className="btn btn-primary">
             + 제품 등록
           </button>
         </div>
       </div>
 
-      {/* 통계 카드 */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, margin: "24px 0" }}>
-        <StatCard label="등록 제품" value={stats.total} />
-        <StatCard label="게시중" value={stats.published} accent="#16A34A" />
-        <StatCard label="임시저장" value={stats.draft} accent="#999" />
-        <StatCard label="서브카테고리 수" value={stats.subcategoryCount} />
+      <div className="stat-grid" style={{ margin: "24px 0" }}>
+        <div className="stat-card">
+          <p className="stat-label">등록 제품</p>
+          <p className="stat-value">{stats.total}개</p>
+        </div>
+        <div className="stat-card">
+          <p className="stat-label">게시중</p>
+          <p className="stat-value" style={{ color: "var(--green)" }}>
+            {stats.published}개
+          </p>
+        </div>
+        <div className="stat-card">
+          <p className="stat-label">임시저장</p>
+          <p className="stat-value" style={{ color: "var(--ink-3)" }}>
+            {stats.draft}개
+          </p>
+        </div>
+        <div className="stat-card">
+          <p className="stat-label">서브카테고리 수</p>
+          <p className="stat-value">{stats.subcategoryCount}개</p>
+        </div>
       </div>
 
-      {/* 필터 */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-        <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={selectStyle}>
+      <div className="filters">
+        <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="select" style={{ width: 160 }}>
           <option value="">카테고리 전체</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
@@ -125,7 +134,7 @@ export default function ComparePage() {
             </option>
           ))}
         </select>
-        <select value={deviceFilter} onChange={(e) => setDeviceFilter(e.target.value)} style={selectStyle}>
+        <select value={deviceFilter} onChange={(e) => setDeviceFilter(e.target.value)} className="select" style={{ width: 160 }}>
           <option value="">기기 전체</option>
           {devices.map((d) => (
             <option key={d.id} value={d.id}>
@@ -137,70 +146,62 @@ export default function ComparePage() {
           placeholder="제품명 검색"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          style={{ ...selectStyle, flex: 1 }}
+          className="input"
+          style={{ flex: 1, height: 40 }}
         />
       </div>
 
-      {/* 테이블 */}
-      <div style={{ background: "white", borderRadius: 12, border: "1px solid #eee", overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+      <div className="card" style={{ overflow: "hidden" }}>
+        <table className="list">
           <thead>
-            <tr style={{ background: "#FAFAFA", textAlign: "left" }}>
-              <Th>카테고리</Th>
-              <Th>서브카테고리</Th>
-              <Th>기기</Th>
-              <Th>제품명</Th>
-              <Th>가격</Th>
-              <Th>추천</Th>
-              <Th>상태</Th>
-              <Th>관리</Th>
+            <tr>
+              <th>카테고리</th>
+              <th>서브카테고리</th>
+              <th>기기</th>
+              <th>제품명</th>
+              <th>가격</th>
+              <th>추천</th>
+              <th>상태</th>
+              <th>관리</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={8} style={{ padding: 32, textAlign: "center", color: "#999" }}>
-                  등록된 제품이 없습니다.
+                <td colSpan={8}>
+                  <div className="empty">
+                    <p>등록된 제품이 없습니다</p>
+                    <span>+ 제품 등록 버튼으로 시작해보세요</span>
+                  </div>
                 </td>
               </tr>
             )}
             {filtered.map((p) => (
-              <tr key={p.id} style={{ borderTop: "1px solid #f0f0f0" }}>
-                <Td>{p.subcategory?.category?.name}</Td>
-                <Td>{p.subcategory?.name}</Td>
-                <Td>{p.device?.name}</Td>
-                <Td style={{ fontWeight: 600 }}>{p.name}</Td>
-                <Td>{p.price ? p.price.toLocaleString() + "원" : "-"}</Td>
-                <Td>{p.is_recommended ? "⭐ 추천" : "-"}</Td>
-                <Td>
-                  <span
-                    style={{
-                      padding: "2px 8px",
-                      borderRadius: 6,
-                      fontSize: 12,
-                      background: p.status === "published" ? "#DCFCE7" : "#F1F1F1",
-                      color: p.status === "published" ? "#16A34A" : "#888",
-                    }}
-                  >
+              <tr key={p.id}>
+                <td>{p.subcategory?.category?.name}</td>
+                <td>{p.subcategory?.name}</td>
+                <td>{p.device?.name}</td>
+                <td style={{ fontWeight: 700 }}>{p.name}</td>
+                <td className="num">{p.price ? p.price.toLocaleString() + "원" : "-"}</td>
+                <td>{p.is_recommended ? <span className="badge badge-accent">추천</span> : "-"}</td>
+                <td>
+                  <span className={p.status === "published" ? "badge badge-green" : "badge badge-soft"}>
                     {p.status === "published" ? "게시중" : "임시저장"}
                   </span>
-                </Td>
-                <Td>
+                </td>
+                <td>
                   <div style={{ display: "flex", gap: 4 }}>
-                    <button onClick={() => openView(p.id)} style={btnTiny}>
+                    <button onClick={() => openView(p.id)} className="btn btn-sm btn-soft">
                       보기
                     </button>
-                    <button onClick={() => openEdit(p.id)} style={btnTiny}>
+                    <button onClick={() => openEdit(p.id)} className="btn btn-sm btn-soft">
                       수정
                     </button>
-                    <button
-                      onClick={() => handleDelete(p.id)}
-                      style={{ ...btnTiny, color: "#DC2626", borderColor: "#FCA5A5" }}
-                    >
+                    <button onClick={() => handleDelete(p.id)} className="btn btn-sm btn-danger">
                       삭제
                     </button>
                   </div>
-                </Td>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -233,48 +234,3 @@ export default function ComparePage() {
     </div>
   );
 }
-
-function StatCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
-  return (
-    <div style={{ background: "white", borderRadius: 12, border: "1px solid #eee", padding: 20 }}>
-      <p style={{ fontSize: 13, color: "#888", marginBottom: 8 }}>{label}</p>
-      <p style={{ fontSize: 28, fontWeight: 800, color: accent || "#111" }}>{value}개</p>
-    </div>
-  );
-}
-
-function Th({ children }: { children: React.ReactNode }) {
-  return <th style={{ padding: "12px 16px", fontWeight: 600, color: "#555" }}>{children}</th>;
-}
-function Td({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return <td style={{ padding: "12px 16px", ...style }}>{children}</td>;
-}
-
-const btnPrimary: React.CSSProperties = {
-  background: "#111",
-  color: "white",
-  padding: "10px 16px",
-  borderRadius: 8,
-  fontSize: 14,
-  fontWeight: 600,
-};
-const btnSecondary: React.CSSProperties = {
-  background: "white",
-  border: "1px solid #ddd",
-  padding: "10px 16px",
-  borderRadius: 8,
-  fontSize: 14,
-};
-const btnTiny: React.CSSProperties = {
-  background: "white",
-  border: "1px solid #ddd",
-  padding: "4px 10px",
-  borderRadius: 6,
-  fontSize: 12,
-};
-const selectStyle: React.CSSProperties = {
-  padding: "8px 12px",
-  borderRadius: 8,
-  border: "1px solid #ddd",
-  fontSize: 14,
-};

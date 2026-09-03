@@ -13,7 +13,6 @@ export default function SubcategoryModal({ categories, onClose }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [attributeDefs, setAttributeDefs] = useState<any[]>([]);
 
-  // 새 서브카테고리 입력값
   const [newCategoryId, setNewCategoryId] = useState("");
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
@@ -81,11 +80,7 @@ export default function SubcategoryModal({ categories, onClose }: Props) {
       label_right: "강화형",
       sort_order: attributeDefs.length + 1,
     });
-    const { data } = await supabase
-      .from("attribute_definition")
-      .select("*")
-      .eq("subcategory_id", selectedId)
-      .order("sort_order");
+    const { data } = await supabase.from("attribute_definition").select("*").eq("subcategory_id", selectedId).order("sort_order");
     setAttributeDefs(data || []);
   };
 
@@ -100,166 +95,143 @@ export default function SubcategoryModal({ categories, onClose }: Props) {
   };
 
   return (
-    <div style={overlayStyle}>
-      <div style={modalStyle}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700 }}>서브카테고리 관리</h2>
-          <button onClick={onClose} style={{ fontSize: 18 }}>
-            ×
+    <div className="modal-dim" onClick={onClose}>
+      <div className="modal" style={{ maxWidth: 860 }} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-head">
+          <h3>서브카테고리 관리</h3>
+          <button className="x" onClick={onClose} aria-label="닫기">
+            ✕
           </button>
         </div>
 
-        <div style={{ display: "flex", gap: 24 }}>
-          {/* 왼쪽: 서브카테고리 목록 + 새로 추가 */}
-          <div style={{ flex: 1 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>기존 서브카테고리</h3>
-            <div style={{ maxHeight: 240, overflowY: "auto", marginBottom: 16 }}>
-              {subcategories.map((s) => (
-                <div
-                  key={s.id}
-                  onClick={() => setSelectedId(s.id)}
-                  style={{
-                    padding: 8,
-                    borderRadius: 8,
-                    cursor: "pointer",
-                    background: selectedId === s.id ? "#F1F1F1" : "transparent",
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span>
-                    [{s.category?.name}] {s.name}
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteSubcategory(s.id);
+        <div className="modal-body">
+          <div style={{ display: "flex", gap: 24 }}>
+            {/* 왼쪽 */}
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: "var(--ink-2)" }}>기존 서브카테고리</p>
+              <div style={{ maxHeight: 220, overflowY: "auto", marginBottom: 20 }}>
+                {subcategories.map((s) => (
+                  <div
+                    key={s.id}
+                    onClick={() => setSelectedId(s.id)}
+                    style={{
+                      padding: "10px 12px",
+                      borderRadius: 10,
+                      cursor: "pointer",
+                      background: selectedId === s.id ? "var(--soft)" : "transparent",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: 2,
                     }}
-                    style={{ color: "#DC2626", fontSize: 12 }}
                   >
-                    삭제
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>+ 새 서브카테고리</h3>
-            <select value={newCategoryId} onChange={(e) => setNewCategoryId(e.target.value)} style={inputStyle}>
-              <option value="">카테고리 선택</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <input
-              placeholder="서브카테고리명"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              style={{ ...inputStyle, marginTop: 8 }}
-            />
-            <input
-              placeholder="설명"
-              value={newDescription}
-              onChange={(e) => setNewDescription(e.target.value)}
-              style={{ ...inputStyle, marginTop: 8 }}
-            />
-            <button onClick={handleCreateSubcategory} style={{ ...submitBtnStyle, marginTop: 8 }}>
-              추가
-            </button>
-            {message && <p style={{ fontSize: 12, marginTop: 8 }}>{message}</p>}
-          </div>
-
-          {/* 오른쪽: 선택한 서브카테고리의 속성 정의 */}
-          <div style={{ flex: 1, borderLeft: "1px solid #eee", paddingLeft: 24 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
-              {selectedId ? "비교 속성 정의" : "왼쪽에서 서브카테고리를 선택하세요"}
-            </h3>
-            {selectedId && (
-              <>
-                {attributeDefs.map((attr) => (
-                  <div key={attr.id} style={{ border: "1px solid #eee", borderRadius: 8, padding: 8, marginBottom: 8 }}>
-                    <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
-                      <input
-                        value={attr.name}
-                        onChange={(e) => updateAttribute(attr.id, "name", e.target.value)}
-                        style={{ ...inputStyle, flex: 1 }}
-                      />
-                      <select
-                        value={attr.display_type}
-                        onChange={(e) => updateAttribute(attr.id, "display_type", e.target.value)}
-                      >
-                        <option value="slider">게이지</option>
-                        <option value="icon">아이콘</option>
-                        <option value="chip">칩</option>
-                      </select>
-                      <button onClick={() => deleteAttribute(attr.id)} style={{ color: "#DC2626" }}>
-                        삭제
-                      </button>
-                    </div>
-                    {attr.display_type === "slider" && (
-                      <div style={{ display: "flex", gap: 4 }}>
-                        <input
-                          placeholder="왼쪽 라벨"
-                          value={attr.label_left || ""}
-                          onChange={(e) => updateAttribute(attr.id, "label_left", e.target.value)}
-                          style={{ ...inputStyle, flex: 1 }}
-                        />
-                        <input
-                          placeholder="오른쪽 라벨"
-                          value={attr.label_right || ""}
-                          onChange={(e) => updateAttribute(attr.id, "label_right", e.target.value)}
-                          style={{ ...inputStyle, flex: 1 }}
-                        />
-                      </div>
-                    )}
+                    <span style={{ fontSize: 13.5 }}>
+                      <span className="badge badge-soft" style={{ marginRight: 6 }}>
+                        {s.category?.name}
+                      </span>
+                      {s.name}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteSubcategory(s.id);
+                      }}
+                      className="btn btn-sm btn-danger"
+                    >
+                      삭제
+                    </button>
                   </div>
                 ))}
-                <button onClick={addAttributeRow} style={btnSecondary}>
-                  + 속성 추가
-                </button>
-              </>
-            )}
+              </div>
+
+              <p style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: "var(--ink-2)" }}>+ 새 서브카테고리</p>
+              <div className="field">
+                <select value={newCategoryId} onChange={(e) => setNewCategoryId(e.target.value)} className="select">
+                  <option value="">카테고리 선택</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="field">
+                <input placeholder="서브카테고리명" value={newName} onChange={(e) => setNewName(e.target.value)} className="input" />
+              </div>
+              <div className="field">
+                <input placeholder="설명" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} className="input" />
+              </div>
+              <button onClick={handleCreateSubcategory} className="btn btn-primary btn-block">
+                추가
+              </button>
+              {message && <p className="help">{message}</p>}
+            </div>
+
+            {/* 오른쪽 */}
+            <div style={{ flex: 1, borderLeft: "1px solid var(--line-2)", paddingLeft: 24 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: "var(--ink-2)" }}>
+                {selectedId ? "비교 속성 정의" : "왼쪽에서 서브카테고리를 선택하세요"}
+              </p>
+              {selectedId && (
+                <>
+                  {attributeDefs.map((attr) => (
+                    <div key={attr.id} className="card" style={{ padding: 10, marginBottom: 8 }}>
+                      <div style={{ display: "flex", gap: 4, marginBottom: 6 }}>
+                        <input
+                          value={attr.name}
+                          onChange={(e) => updateAttribute(attr.id, "name", e.target.value)}
+                          className="input"
+                          style={{ height: 36, flex: 1 }}
+                        />
+                        <select
+                          value={attr.display_type}
+                          onChange={(e) => updateAttribute(attr.id, "display_type", e.target.value)}
+                          className="select"
+                          style={{ height: 36, width: 100 }}
+                        >
+                          <option value="slider">게이지</option>
+                          <option value="icon">아이콘</option>
+                          <option value="chip">칩</option>
+                        </select>
+                        <button onClick={() => deleteAttribute(attr.id)} className="btn btn-sm btn-danger">
+                          삭제
+                        </button>
+                      </div>
+                      {attr.display_type === "slider" && (
+                        <div style={{ display: "flex", gap: 4 }}>
+                          <input
+                            placeholder="왼쪽 라벨"
+                            value={attr.label_left || ""}
+                            onChange={(e) => updateAttribute(attr.id, "label_left", e.target.value)}
+                            className="input"
+                            style={{ height: 34, flex: 1 }}
+                          />
+                          <input
+                            placeholder="오른쪽 라벨"
+                            value={attr.label_right || ""}
+                            onChange={(e) => updateAttribute(attr.id, "label_right", e.target.value)}
+                            className="input"
+                            style={{ height: 34, flex: 1 }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  <button onClick={addAttributeRow} className="btn btn-soft btn-block">
+                    + 속성 추가
+                  </button>
+                </>
+              )}
+            </div>
           </div>
+        </div>
+
+        <div className="modal-foot">
+          <button onClick={onClose} className="btn btn-primary">
+            완료
+          </button>
         </div>
       </div>
     </div>
   );
 }
-
-const overlayStyle: React.CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.4)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 50,
-};
-const modalStyle: React.CSSProperties = {
-  background: "white",
-  borderRadius: 16,
-  padding: 24,
-  width: 720,
-  maxHeight: "85vh",
-  overflowY: "auto",
-};
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: 8,
-  borderRadius: 8,
-  border: "1px solid #ddd",
-};
-const submitBtnStyle: React.CSSProperties = {
-  padding: "8px 16px",
-  background: "#111",
-  color: "white",
-  borderRadius: 8,
-  fontWeight: 600,
-};
-const btnSecondary: React.CSSProperties = {
-  background: "white",
-  border: "1px solid #ddd",
-  padding: "8px 16px",
-  borderRadius: 8,
-};

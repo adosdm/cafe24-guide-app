@@ -1,49 +1,43 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isOn = (path: string) => (pathname === path ? "on" : "");
+  const isOnPrefix = (prefix: string) => (pathname?.startsWith(prefix) ? "on" : "");
+
   return (
-    <div style={{ minHeight: "100vh", background: "#F7F7F8", fontFamily: "sans-serif" }}>
-      <nav
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "16px 40px",
-          background: "white",
-          borderBottom: "1px solid #eee",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-          <span style={{ fontWeight: 800, fontSize: 18 }}>스마트가이드</span>
-          <Link href="/admin" style={{ color: "#333", textDecoration: "none" }}>
-            개요
-          </Link>
-          <Link
-            href="/admin/compare"
-            style={{ color: "#111", fontWeight: 700, textDecoration: "none", borderBottom: "2px solid #111" }}
-          >
-            비교하기
-          </Link>
-          <Link href="/admin/guide" style={{ color: "#999", textDecoration: "none" }}>
-            가이드
-          </Link>
+    <div>
+      <header className="gnb">
+        <div className="gnb-inner">
+          <nav className="gnb-menu">
+            <Link href="/admin" className={isOn("/admin")}>
+              개요
+            </Link>
+            <Link href="/admin/compare" className={isOnPrefix("/admin/compare")}>
+              비교하기
+            </Link>
+            <Link href="/admin/guide" className={isOnPrefix("/admin/guide")}>
+              가이드
+            </Link>
+          </nav>
+
+          {/* 로고 자리 - 원하는 텍스트나 이미지로 교체하세요 */}
+          <div className="gnb-logo">SMART GUIDE</div>
+
+          <div className="gnb-util">
+            <Link href="/compare" target="_blank" className="btn btn-primary btn-sm">
+              고객 화면 보기 ↗
+            </Link>
+          </div>
         </div>
-        <Link
-          href="/compare"
-          target="_blank"
-          style={{
-            background: "#111",
-            color: "white",
-            padding: "8px 16px",
-            borderRadius: 8,
-            fontSize: 13,
-            textDecoration: "none",
-          }}
-        >
-          고객 화면 보기 ↗
-        </Link>
-      </nav>
-      <main style={{ padding: "32px 40px" }}>{children}</main>
+      </header>
+
+      <main className="container" style={{ paddingTop: 32, paddingBottom: 60 }}>
+        {children}
+      </main>
     </div>
   );
 }
