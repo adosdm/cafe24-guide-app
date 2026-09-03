@@ -43,7 +43,7 @@ export default function CustomerComparePage() {
         const { data: products } = await supabase
           .from("comparison_product")
           .select(
-            `id, name, price, tagline, is_recommended, detail_url,
+            `id, name, price, tagline, configuration_text, is_recommended, detail_url,
              product_image ( image_url, sort_order ),
              product_attribute_value (
                gauge_value, icon_text, chip_title, chip_content, description,
@@ -52,7 +52,8 @@ export default function CustomerComparePage() {
           )
           .eq("subcategory_id", sub.id)
           .eq("device_id", deviceId)
-          .eq("status", "published");
+          .eq("status", "published")
+          .order("sort_order");
 
         if (products && products.length > 0) result.push({ subcategory: sub, products });
       }
@@ -61,128 +62,276 @@ export default function CustomerComparePage() {
   }, [categoryId, deviceId]);
 
   return (
-    <div>
-      <header className="gnb">
-        <div className="gnb-inner">
-          <div className="gnb-logo">SMART GUIDE</div>
-        </div>
-      </header>
-
-      <div className="container" style={{ paddingTop: 40, paddingBottom: 80, maxWidth: 900 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>
-          다양한 제품을 한눈에 비교해 보세요
+    <div style={{ background: "#fff", minHeight: "100vh" }}>
+      <div style={{ maxWidth: 1440, margin: "0 auto", padding: "60px 240px 100px" }}>
+        {/* 타이틀 */}
+        <p style={{ fontSize: 15, fontWeight: 700, color: "#1E2124", marginBottom: 8 }}>비교하기</p>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: "#1E2124", marginBottom: 32 }}>
+          다양한 제품을 한눈에 비교해 보세요.
         </h1>
 
-        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-          {categories.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setCategoryId(c.id)}
-              className={c.id === categoryId ? "btn btn-primary btn-sm" : "btn btn-soft btn-sm"}
-            >
-              {c.name}
-            </button>
-          ))}
+        {/* 카테고리 탭 */}
+        <div style={{ display: "flex", gap: 32, marginBottom: 20 }}>
+          {categories.map((c) => {
+            const active = c.id === categoryId;
+            return (
+              <button
+                key={c.id}
+                onClick={() => setCategoryId(c.id)}
+                style={{
+                  fontSize: 18,
+                  fontWeight: active ? 600 : 500,
+                  color: active ? "#1E2124" : "#bbb",
+                  textDecoration: active ? "underline" : "none",
+                  background: "none",
+                  border: "none",
+                }}
+              >
+                {c.name}
+              </button>
+            );
+          })}
         </div>
 
-        <div style={{ display: "flex", gap: 8, marginBottom: 32 }}>
-          {devices.map((d) => (
-            <button
-              key={d.id}
-              onClick={() => setDeviceId(d.id)}
-              className={d.id === deviceId ? "badge badge-dark" : "badge badge-soft"}
-              style={{ cursor: "pointer", border: "none" }}
-            >
-              {d.name}
-            </button>
-          ))}
+        <div style={{ borderBottom: "1px solid #eee", marginBottom: 28 }} />
+
+        {/* 기기 탭 */}
+        <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+          {devices.map((d) => {
+            const active = d.id === deviceId;
+            return (
+              <button
+                key={d.id}
+                onClick={() => setDeviceId(d.id)}
+                style={{
+                  padding: "8px 25px",
+                  borderRadius: 60,
+                  fontSize: 16,
+                  fontWeight: active ? 700 : 500,
+                  background: active ? "#000" : "#fff",
+                  color: active ? "#fff" : "#bbb",
+                  border: active ? "none" : "1px solid #bbb",
+                }}
+              >
+                {d.name}
+              </button>
+            );
+          })}
         </div>
+
+        <p style={{ fontSize: 13, color: "#999", marginBottom: 48 }}>
+          ※ 아래 비교표 이미지는 참고용이며, 실제 제품 사양은 시리즈 전체가 동일합니다.
+        </p>
 
         {groups.length === 0 && (
-          <div className="empty">
-            <p>이 조합에 등록된 제품이 아직 없습니다</p>
+          <div style={{ padding: "80px 0", textAlign: "center", color: "#999" }}>
+            이 조합에 등록된 제품이 아직 없습니다.
           </div>
         )}
 
         {groups.map((group) => (
-          <div key={group.subcategory.id} style={{ marginBottom: 48 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 800 }}>{group.subcategory.name}</h2>
-            <p style={{ color: "var(--ink-3)", fontSize: 13, marginBottom: 16 }}>{group.subcategory.description}</p>
+          <div key={group.subcategory.id} style={{ marginBottom: 80 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700, color: "#1E2124", marginBottom: 8 }}>
+              {group.subcategory.name}
+            </h2>
+            <p style={{ fontSize: 14, color: "#999", marginBottom: 28 }}>{group.subcategory.description}</p>
 
-            {group.products.map((p: any) => {
-              const images = (p.product_image || []).sort((a: any, b: any) => a.sort_order - b.sort_order);
-              const attrs = (p.product_attribute_value || []).sort(
-                (a: any, b: any) => (a.attribute_definition?.sort_order || 0) - (b.attribute_definition?.sort_order || 0)
-              );
-              return (
-                <div key={p.id} className="card" style={{ padding: 20, marginBottom: 16, display: "flex", gap: 20 }}>
-                  {images[0] && <img src={images[0].image_url} className="thumb" style={{ width: 140, height: 140 }} />}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      {p.is_recommended && <span className="badge badge-accent">추천</span>}
-                      <h3 style={{ fontSize: 16, fontWeight: 800 }}>{p.name}</h3>
-                    </div>
-                    <p style={{ color: "var(--ink-3)", fontSize: 13, marginBottom: 12 }}>{p.tagline}</p>
-
-                    {attrs.map((v: any, idx: number) => {
-                      const def = v.attribute_definition;
-                      if (!def) return null;
-                      if (def.display_type === "slider") {
-                        return (
-                          <div key={idx} style={{ marginBottom: 10 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--ink-3)" }}>
-                              <span>{def.label_left}</span>
-                              <span style={{ fontWeight: 700, color: "var(--ink)" }}>{def.name}</span>
-                              <span>{def.label_right}</span>
-                            </div>
-                            <div style={{ background: "var(--line-2)", borderRadius: 4, height: 6, marginTop: 4 }}>
-                              <div
-                                style={{
-                                  width: `${((v.gauge_value || 1) / 4) * 100}%`,
-                                  background: "var(--accent)",
-                                  height: 6,
-                                  borderRadius: 4,
-                                }}
-                              />
-                            </div>
-                            {v.description && <p className="help">{v.description}</p>}
-                          </div>
-                        );
-                      }
-                      if (def.display_type === "icon") {
-                        return (
-                          <p key={idx} style={{ fontSize: 12.5, marginBottom: 6 }}>
-                            <b>{def.name}:</b> {v.icon_text}
-                          </p>
-                        );
-                      }
-                      if (def.display_type === "chip") {
-                        return (
-                          <div key={idx} className="badge badge-soft" style={{ height: "auto", display: "inline-block", padding: "6px 12px", marginBottom: 6 }}>
-                            <p style={{ fontSize: 12, fontWeight: 700 }}>{v.chip_title}</p>
-                            <p style={{ fontSize: 11, color: "var(--ink-3)" }}>{v.chip_content}</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    })}
-
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, alignItems: "center" }}>
-                      <span className="num" style={{ fontWeight: 800, fontSize: 15 }}>
-                        {p.price ? p.price.toLocaleString() + "원" : ""}
-                      </span>
-                      {p.detail_url && (
-                        <a href={p.detail_url} className="btn btn-primary btn-sm">
-                          구입하기
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                gap: 24,
+              }}
+            >
+              {group.products.map((p: any) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function ProductCard({ product }: { product: any }) {
+  const images = (product.product_image || []).sort((a: any, b: any) => a.sort_order - b.sort_order);
+  const attrs = (product.product_attribute_value || []).sort(
+    (a: any, b: any) => (a.attribute_definition?.sort_order || 0) - (b.attribute_definition?.sort_order || 0)
+  );
+  const taglineLines = (product.tagline || "").split("\n");
+
+  return (
+    <div
+      style={{
+        width: 280,
+        borderRadius: 20,
+        boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+        overflow: "hidden",
+        background: "#fff",
+      }}
+    >
+      {/* 이미지 */}
+      <div style={{ position: "relative", width: 280, height: 279, background: "#EFF1F2" }}>
+        {images[0] && (
+          <img src={images[0].image_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        )}
+        {product.is_recommended && (
+          <span
+            style={{
+              position: "absolute",
+              top: 16,
+              left: 16,
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(4px)",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 600,
+              padding: "4px 12px",
+              borderRadius: 5,
+            }}
+          >
+            추천
+          </span>
+        )}
+      </div>
+
+      <div style={{ padding: "20px 24px" }}>
+        {/* 제품명 */}
+        <p style={{ fontSize: 18, fontWeight: 600, textAlign: "center", color: "#000", marginBottom: 8 }}>
+          {product.name}
+        </p>
+
+        {/* 설명 2줄 */}
+        {product.tagline && (
+          <p style={{ fontSize: 14, textAlign: "center", color: "rgba(0,0,0,0.7)", marginBottom: 8, lineHeight: 1.4 }}>
+            {taglineLines.map((line: string, i: number) => (
+              <span key={i}>
+                {line}
+                {i < taglineLines.length - 1 && <br />}
+              </span>
+            ))}
+          </p>
+        )}
+
+        {/* 상세페이지 보기 */}
+        {product.detail_url && (
+          <a
+            href={product.detail_url}
+            style={{
+              display: "block",
+              textAlign: "center",
+              fontSize: 12,
+              fontWeight: 500,
+              color: "#FF7B00",
+              marginBottom: 16,
+            }}
+          >
+            상세페이지 보기 →
+          </a>
+        )}
+
+        <div style={{ borderTop: "1px solid #eee", marginBottom: 16 }} />
+
+        {/* 속성값들 */}
+        {attrs.map((v: any, idx: number) => {
+          const def = v.attribute_definition;
+          if (!def) return null;
+
+          if (def.display_type === "slider") {
+            const pct = ((v.gauge_value || 1) / 4) * 100;
+            return (
+              <div key={idx} style={{ marginBottom: 16 }}>
+                {v.description && (
+                  <p style={{ fontSize: 14, fontWeight: 600, textAlign: "center", color: "#000", marginBottom: 8 }}>
+                    {v.description}
+                  </p>
+                )}
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, color: "rgba(0,0,0,0.5)", marginBottom: 4 }}>
+                  <span>{def.label_left}</span>
+                  <span>{def.label_right}</span>
+                </div>
+                <div style={{ position: "relative", height: 6, borderRadius: 999, background: "#EFF1F2", border: "1px solid rgba(123,123,123,0.2)" }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      height: "100%",
+                      width: `${pct}%`,
+                      borderRadius: 999,
+                      background: "linear-gradient(to right, rgba(30,33,36,0.4), #1E2124)",
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: `calc(${pct}% - 6px)`,
+                      transform: "translateY(-50%)",
+                      width: 12,
+                      height: 12,
+                      borderRadius: "50%",
+                      background: "#1E2124",
+                    }}
+                  />
+                </div>
+                <p style={{ fontSize: 14, textAlign: "center", color: "#1E1E1E", marginTop: 6 }}>{def.name}</p>
+              </div>
+            );
+          }
+
+          if (def.display_type === "icon") {
+            return (
+              <div key={idx} style={{ marginBottom: 16, textAlign: "center" }}>
+                <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{v.icon_text}</p>
+                <p style={{ fontSize: 14, color: "#1E1E1E" }}>{def.name}</p>
+              </div>
+            );
+          }
+
+          if (def.display_type === "chip") {
+            return (
+              <div key={idx} style={{ marginBottom: 16, textAlign: "center" }}>
+                <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{v.chip_title}</p>
+                <p style={{ fontSize: 12, color: "#999" }}>{v.chip_content}</p>
+              </div>
+            );
+          }
+          return null;
+        })}
+
+        {/* 구성 */}
+        {product.configuration_text && (
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
+            <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{product.configuration_text}</p>
+            <p style={{ fontSize: 14, color: "#1E1E1E" }}>구성</p>
+          </div>
+        )}
+
+        {/* 가격 */}
+        {product.price && (
+          <p style={{ fontSize: 18, fontWeight: 600, textAlign: "center", marginBottom: 16 }}>
+            {product.price.toLocaleString()}원
+          </p>
+        )}
+
+        {/* 구입하기 */}
+        <a
+          href={product.detail_url || "#"}
+          style={{
+            display: "block",
+            textAlign: "center",
+            padding: "10px 0",
+            borderRadius: 46,
+            background: "#FF7B00",
+            color: "#fff",
+            fontSize: 14,
+            fontWeight: 700,
+          }}
+        >
+          구입하기
+        </a>
       </div>
     </div>
   );

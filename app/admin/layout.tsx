@@ -13,9 +13,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <header className="gnb">
         <div className="gnb-inner">
           <nav className="gnb-menu">
-            <Link href="/admin" className={isOn("/admin")}>
-              개요
-            </Link>
             <Link href="/admin/compare" className={isOnPrefix("/admin/compare")}>
               비교하기
             </Link>
