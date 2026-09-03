@@ -65,63 +65,65 @@ export default function CustomerComparePage() {
     <div style={{ background: "#fff", minHeight: "100vh" }}>
       <div style={{ maxWidth: 1440, margin: "0 auto", padding: "60px 240px 100px" }}>
         {/* 타이틀 */}
-        <p style={{ fontSize: 15, fontWeight: 700, color: "#1E2124", marginBottom: 8 }}>비교하기</p>
-        <h1 style={{ fontSize: 26, fontWeight: 700, color: "#1E2124", marginBottom: 32 }}>
-          다양한 제품을 한눈에 비교해 보세요.
-        </h1>
+        <div style={{ textAlign: "center" }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: "#1E2124", marginBottom: 8 }}>비교하기</h1>
+          <p style={{ fontSize: 14, color: "#666", marginBottom: 32 }}>
+            다양한 제품을 한눈에 비교해 보세요.
+          </p>
 
-        {/* 카테고리 탭 */}
-        <div style={{ display: "flex", gap: 32, marginBottom: 20 }}>
-          {categories.map((c) => {
-            const active = c.id === categoryId;
-            return (
-              <button
-                key={c.id}
-                onClick={() => setCategoryId(c.id)}
-                style={{
-                  fontSize: 18,
-                  fontWeight: active ? 600 : 500,
-                  color: active ? "#1E2124" : "#bbb",
-                  textDecoration: active ? "underline" : "none",
-                  background: "none",
-                  border: "none",
-                }}
-              >
-                {c.name}
-              </button>
-            );
-          })}
+          {/* 카테고리 탭 */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 32, marginBottom: 20 }}>
+            {categories.map((c) => {
+              const active = c.id === categoryId;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setCategoryId(c.id)}
+                  style={{
+                    fontSize: 18,
+                    fontWeight: active ? 600 : 500,
+                    color: active ? "#1E2124" : "#bbb",
+                    textDecoration: active ? "underline" : "none",
+                    background: "none",
+                    border: "none",
+                  }}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ borderBottom: "1px solid #eee", marginBottom: 28 }} />
+
+          {/* 기기 탭 */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 12, marginBottom: 12 }}>
+            {devices.map((d) => {
+              const active = d.id === deviceId;
+              return (
+                <button
+                  key={d.id}
+                  onClick={() => setDeviceId(d.id)}
+                  style={{
+                    padding: "8px 25px",
+                    borderRadius: 60,
+                    fontSize: 16,
+                    fontWeight: active ? 700 : 500,
+                    background: active ? "#000" : "#fff",
+                    color: active ? "#fff" : "#bbb",
+                    border: active ? "none" : "1px solid #bbb",
+                  }}
+                >
+                  {d.name}
+                </button>
+              );
+            })}
+          </div>
+
+          <p style={{ fontSize: 13, color: "#999", marginBottom: 48 }}>
+            ※ 아래 비교표 이미지는 참고용이며, 실제 제품 사양은 시리즈 전체가 동일합니다.
+          </p>
         </div>
-
-        <div style={{ borderBottom: "1px solid #eee", marginBottom: 28 }} />
-
-        {/* 기기 탭 */}
-        <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-          {devices.map((d) => {
-            const active = d.id === deviceId;
-            return (
-              <button
-                key={d.id}
-                onClick={() => setDeviceId(d.id)}
-                style={{
-                  padding: "8px 25px",
-                  borderRadius: 60,
-                  fontSize: 16,
-                  fontWeight: active ? 700 : 500,
-                  background: active ? "#000" : "#fff",
-                  color: active ? "#fff" : "#bbb",
-                  border: active ? "none" : "1px solid #bbb",
-                }}
-              >
-                {d.name}
-              </button>
-            );
-          })}
-        </div>
-
-        <p style={{ fontSize: 13, color: "#999", marginBottom: 48 }}>
-          ※ 아래 비교표 이미지는 참고용이며, 실제 제품 사양은 시리즈 전체가 동일합니다.
-        </p>
 
         {groups.length === 0 && (
           <div style={{ padding: "80px 0", textAlign: "center", color: "#999" }}>

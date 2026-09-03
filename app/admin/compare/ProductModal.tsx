@@ -288,7 +288,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                         />
                         <p className="help">{v.gauge_value || 2} / 4</p>
                         <input
-                          placeholder="비교 설명"
+                          placeholder={def.description_hint || "비교 설명"}
                           value={v.description || ""}
                           disabled={readOnly}
                           onChange={(e) => updateValue(def.id, "description", e.target.value)}
@@ -309,7 +309,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                           style={{ height: 38, marginBottom: 6 }}
                         />
                         <input
-                          placeholder="비교 설명"
+                          placeholder={def.description_hint || "비교 설명"}
                           value={v.description || ""}
                           disabled={readOnly}
                           onChange={(e) => updateValue(def.id, "description", e.target.value)}
