@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 // TODO: 실제 값으로 교체하세요
 const MALL_ID = "adoworldwidetest"; // 카페24 쇼핑몰 아이디
-const CLIENT_ID = process.env.IAvgWaXLGNPsCapdtYe5fO!;
-const CLIENT_SECRET = process.env.go9SVhetPCaNXqK03exQTF!;
+const CLIENT_ID = process.env.CAFE24_CLIENT_ID!;
+const CLIENT_SECRET = process.env.CAFE24_CLIENT_SECRET!;
 const REDIRECT_URI = "https://cafe24-guide-app.vercel.app/api/auth/callback";
 
 export async function GET(request: NextRequest) {
