@@ -34,6 +34,8 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [fetchingPrice, setFetchingPrice] = useState(false);
+  const [priceFetchMessage, setPriceFetchMessage] = useState("");
 
   const readOnly = mode === "view";
   const title = mode === "create" ? "제품 등록" : mode === "edit" ? "제품 수정" : "제품 상세보기";
@@ -96,6 +98,29 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
     setExistingImages(existingImages.filter((i) => i.id !== imgId));
   };
   const removeNewFile = (idx: number) => setNewFiles(newFiles.filter((_, i) => i !== idx));
+
+  const fetchPriceFromCafe24 = async () => {
+    if (!detailUrl) return;
+    setFetchingPrice(true);
+    setPriceFetchMessage("");
+
+    try {
+      const res = await fetch(`/api/cafe24/product-price?detail_url=${encodeURIComponent(detailUrl)}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setPriceFetchMessage("불러오기 실패: " + (data.error || "알 수 없는 오류"));
+        setFetchingPrice(false);
+        return;
+      }
+
+      setPrice(String(data.price));
+      setPriceFetchMessage(`"${data.product_name}" 가격을 불러왔습니다.`);
+    } catch (err) {
+      setPriceFetchMessage("불러오기 실패: " + String(err));
+    }
+    setFetchingPrice(false);
+  };
 
   const handleSubmit = async () => {
     if (!subcategoryId || !deviceId || !name) {
@@ -222,6 +247,32 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
               </div>
 
               <div className="field">
+                <label>상세페이지 URL</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    value={detailUrl}
+                    onChange={(e) => setDetailUrl(e.target.value)}
+                    disabled={readOnly}
+                    className="input"
+                    placeholder="https://..."
+                    style={{ flex: 1 }}
+                  />
+                  {!readOnly && (
+                    <button
+                      type="button"
+                      onClick={fetchPriceFromCafe24}
+                      disabled={fetchingPrice || !detailUrl}
+                      className="btn btn-soft"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      {fetchingPrice ? "불러오는 중..." : "가격 불러오기"}
+                    </button>
+                  )}
+                </div>
+                {priceFetchMessage && <p className="help">{priceFetchMessage}</p>}
+              </div>
+
+              <div className="field">
                 <label>가격</label>
                 <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} disabled={readOnly} className="input" />
               </div>
@@ -229,17 +280,6 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
               <div className="field">
                 <label>캐치프레이즈</label>
                 <input value={tagline} onChange={(e) => setTagline(e.target.value)} disabled={readOnly} className="input" />
-              </div>
-
-              <div className="field">
-                <label>상세페이지 URL</label>
-                <input
-                  value={detailUrl}
-                  onChange={(e) => setDetailUrl(e.target.value)}
-                  disabled={readOnly}
-                  className="input"
-                  placeholder="https://..."
-                />
               </div>
 
               <div className="field">
