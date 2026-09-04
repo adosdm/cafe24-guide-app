@@ -46,7 +46,7 @@ export default function CustomerComparePage() {
             `id, name, price, tagline, configuration_text, is_recommended, detail_url,
              product_image ( image_url, sort_order ),
              product_attribute_value (
-               gauge_value, icon_text, chip_title, chip_content, description,
+               gauge_value, icon_text, chip_title, chip_content, chip_tags, description,
                attribute_definition ( name, display_type, label_left, label_right, sort_order )
              )`
           )
@@ -63,7 +63,7 @@ export default function CustomerComparePage() {
 
   return (
     <div style={{ background: "#fff", minHeight: "100vh" }}>
-      <div style={{ maxWidth: 1440, margin: "0 auto", padding: "60px 240px 100px" }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "60px 24px 100px" }}>
         {/* 타이틀 */}
         <div style={{ textAlign: "center" }}>
           <h1 style={{ fontSize: 26, fontWeight: 700, color: "#1E2124", marginBottom: 8 }}>비교하기</h1>
@@ -358,9 +358,34 @@ function ProductCard({ product }: { product: any }) {
           }
 
           if (def.display_type === "chip") {
+            const tags = (v.chip_tags || "")
+              .split(",")
+              .map((t: string) => t.trim())
+              .filter(Boolean);
             return (
               <div key={idx} style={{ marginBottom: 16, textAlign: "center" }}>
-                <p style={{ fontSize: 14, color: "#1E1E1E", marginBottom: 4 }}>{v.chip_title}</p>
+                <p style={{ fontSize: 14, color: "#1E1E1E", marginBottom: 8 }}>{v.chip_title}</p>
+                {tags.length > 0 && (
+                  <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
+                    {tags.map((tag: string, tagIdx: number) => (
+                      <span
+                        key={tagIdx}
+                        style={{
+                          display: "inline-block",
+                          padding: "3px 10px",
+                          borderRadius: 6,
+                          border: "1px solid #8A8A8A",
+                          background: "#fff",
+                          fontSize: 11,
+                          fontWeight: 500,
+                          color: "#717171",
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <p style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>{v.chip_content}</p>
               </div>
             );

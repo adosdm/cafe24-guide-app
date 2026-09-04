@@ -20,6 +20,8 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [tagline, setTagline] = useState("");
+  const [detailUrl, setDetailUrl] = useState("");
+  const [configurationText, setConfigurationText] = useState("");
   const [status, setStatus] = useState("draft");
   const [isRecommended, setIsRecommended] = useState(false);
 
@@ -60,6 +62,8 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
         setName(product.name);
         setPrice(product.price ? String(product.price) : "");
         setTagline(product.tagline || "");
+        setDetailUrl(product.detail_url || "");
+        setConfigurationText(product.configuration_text || "");
         setStatus(product.status || "draft");
         setIsRecommended(product.is_recommended || false);
       }
@@ -107,6 +111,8 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
       name,
       price: price ? Number(price) : null,
       tagline,
+      detail_url: detailUrl,
+      configuration_text: configurationText,
       status,
       is_recommended: isRecommended,
     };
@@ -140,6 +146,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
           icon_text: def.display_type === "icon" ? v.icon_text || null : null,
           chip_title: def.display_type === "chip" ? v.chip_title || null : null,
           chip_content: def.display_type === "chip" ? v.chip_content || null : null,
+          chip_tags: def.display_type === "chip" ? v.chip_tags || null : null,
           description: v.description || null,
         };
       });
@@ -224,6 +231,28 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
               <div className="field">
                 <label>캐치프레이즈</label>
                 <input value={tagline} onChange={(e) => setTagline(e.target.value)} disabled={readOnly} className="input" />
+              </div>
+
+              <div className="field">
+                <label>상세페이지 URL</label>
+                <input
+                  value={detailUrl}
+                  onChange={(e) => setDetailUrl(e.target.value)}
+                  disabled={readOnly}
+                  className="input"
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div className="field">
+                <label>구성 (선택)</label>
+                <input
+                  value={configurationText}
+                  onChange={(e) => setConfigurationText(e.target.value)}
+                  disabled={readOnly}
+                  className="input"
+                  placeholder="예: 2매입 실속 구성"
+                />
               </div>
 
               <div className="field" style={{ display: "flex", gap: 24, alignItems: "center" }}>
@@ -322,7 +351,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                     {def.display_type === "chip" && (
                       <div>
                         <input
-                          placeholder="칩 제목"
+                          placeholder="칩 제목 (예: 소재)"
                           value={v.chip_title || ""}
                           disabled={readOnly}
                           onChange={(e) => updateValue(def.id, "chip_title", e.target.value)}
@@ -330,7 +359,15 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                           style={{ height: 38, marginBottom: 6 }}
                         />
                         <input
-                          placeholder="칩 내용"
+                          placeholder="태그 (콤마로 구분, 최대 3개 예: PC,TPU,무광)"
+                          value={v.chip_tags || ""}
+                          disabled={readOnly}
+                          onChange={(e) => updateValue(def.id, "chip_tags", e.target.value)}
+                          className="input"
+                          style={{ height: 38, marginBottom: 6 }}
+                        />
+                        <input
+                          placeholder="칩 내용 (예: 고급스러운 무광 텍스처)"
                           value={v.chip_content || ""}
                           disabled={readOnly}
                           onChange={(e) => updateValue(def.id, "chip_content", e.target.value)}
