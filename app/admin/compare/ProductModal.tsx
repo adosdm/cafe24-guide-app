@@ -144,10 +144,8 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
           attribute_definition_id: def.id,
           gauge_value: def.display_type === "slider" && v.gauge_value ? Number(v.gauge_value) : null,
           icon_text: def.display_type === "icon" ? v.icon_text || null : null,
-          chip_title: def.display_type === "chip" ? v.chip_title || null : null,
           chip_content: def.display_type === "chip" ? v.chip_content || null : null,
           chip_tags: def.display_type === "chip" ? v.chip_tags || null : null,
-          description: v.description || null,
         };
       });
       await supabase.from("product_attribute_value").upsert(rows, { onConflict: "product_id,attribute_definition_id" });
@@ -376,15 +374,11 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                         <p className="help" style={{ marginTop: 0 }}>
                           {v.gauge_value || 2} / 4
                         </p>
-
-                        <input
-                          placeholder={def.description_hint || "비교 설명"}
-                          value={v.description || ""}
-                          disabled={readOnly}
-                          onChange={(e) => updateValue(def.id, "description", e.target.value)}
-                          className="input"
-                          style={{ height: 38, marginTop: 6 }}
-                        />
+                        {def.description_hint && (
+                          <p className="help" style={{ fontStyle: "italic" }}>
+                            비교설명(서브카테고리 설정값): {def.description_hint}
+                          </p>
+                        )}
                       </div>
                     )}
 
@@ -396,29 +390,18 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                           disabled={readOnly}
                           onChange={(e) => updateValue(def.id, "icon_text", e.target.value)}
                           className="input"
-                          style={{ height: 38, marginBottom: 6 }}
-                        />
-                        <input
-                          placeholder={def.description_hint || "비교 설명"}
-                          value={v.description || ""}
-                          disabled={readOnly}
-                          onChange={(e) => updateValue(def.id, "description", e.target.value)}
-                          className="input"
                           style={{ height: 38 }}
                         />
+                        {def.description_hint && (
+                          <p className="help" style={{ fontStyle: "italic" }}>
+                            비교설명(서브카테고리 설정값): {def.description_hint}
+                          </p>
+                        )}
                       </div>
                     )}
 
                     {def.display_type === "chip" && (
                       <div>
-                        <input
-                          placeholder="칩 제목 (예: 소재)"
-                          value={v.chip_title || ""}
-                          disabled={readOnly}
-                          onChange={(e) => updateValue(def.id, "chip_title", e.target.value)}
-                          className="input"
-                          style={{ height: 38, marginBottom: 6 }}
-                        />
                         <input
                           placeholder="태그 (콤마로 구분, 최대 3개 예: PC,TPU,무광)"
                           value={v.chip_tags || ""}

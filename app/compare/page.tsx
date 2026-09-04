@@ -46,8 +46,8 @@ export default function CustomerComparePage() {
             `id, name, price, tagline, configuration_text, is_recommended, detail_url,
              product_image ( image_url, sort_order ),
              product_attribute_value (
-               gauge_value, icon_text, chip_title, chip_content, chip_tags, description,
-               attribute_definition ( name, display_type, label_left, label_right, sort_order )
+               gauge_value, icon_text, chip_title, chip_content, chip_tags,
+               attribute_definition ( name, display_type, label_left, label_right, sort_order, description_hint )
              )`
           )
           .eq("subcategory_id", sub.id)
@@ -339,9 +339,9 @@ function ProductCard({ product }: { product: any }) {
                     }}
                   />
                 </div>
-                {v.description && (
+                {def.description_hint && (
                   <p style={{ fontSize: 14, fontWeight: 600, textAlign: "center", color: "#000", marginTop: 6 }}>
-                    {v.description}
+                    {def.description_hint}
                   </p>
                 )}
               </div>
@@ -364,7 +364,7 @@ function ProductCard({ product }: { product: any }) {
               .filter(Boolean);
             return (
               <div key={idx} style={{ marginBottom: 16, textAlign: "center" }}>
-                <p style={{ fontSize: 14, color: "#1E1E1E", marginBottom: 8 }}>{v.chip_title}</p>
+                <p style={{ fontSize: 14, color: "#1E1E1E", marginBottom: 8 }}>{def.name}</p>
                 {tags.length > 0 && (
                   <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
                     {tags.map((tag: string, tagIdx: number) => (

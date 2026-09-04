@@ -217,7 +217,7 @@ export default function SubcategoryModal({ categories, onClose }: Props) {
                       )}
                       {attr.display_type !== "chip" && (
                         <input
-                          placeholder="비교설명 가이드 (예: OO에 강한 느낌으로 작성)"
+                          placeholder="비교설명 (예: 변색에 한층 강한 투명함)"
                           value={attr.description_hint || ""}
                           onChange={(e) => updateAttribute(attr.id, "description_hint", e.target.value)}
                           className="input"
