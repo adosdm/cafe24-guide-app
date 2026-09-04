@@ -273,6 +273,23 @@ function ProductCard({ product }: { product: any }) {
           </p>
         )}
 
+        {/* 상세페이지 보기 */}
+        {product.detail_url && (
+          <a
+            href={product.detail_url}
+            style={{
+              display: "block",
+              textAlign: "center",
+              fontSize: 12,
+              fontWeight: 500,
+              color: "#FF7B00",
+              marginBottom: 16,
+            }}
+          >
+            상세페이지 보기 →
+          </a>
+        )}
+
         <div style={{ borderTop: "1px solid #eee", marginBottom: 16 }} />
 
         {/* 육각형 그래프 - 슬라이더형 속성 요약 */}
@@ -292,11 +309,7 @@ function ProductCard({ product }: { product: any }) {
             const pct = ((v.gauge_value || 1) / 4) * 100;
             return (
               <div key={idx} style={{ marginBottom: 16 }}>
-                {v.description && (
-                  <p style={{ fontSize: 14, fontWeight: 600, textAlign: "center", color: "#000", marginBottom: 8 }}>
-                    {v.description}
-                  </p>
-                )}
+                <p style={{ fontSize: 14, textAlign: "center", color: "#1E1E1E", marginBottom: 8 }}>{def.name}</p>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, color: "rgba(0,0,0,0.5)", marginBottom: 4 }}>
                   <span>{def.label_left}</span>
                   <span>{def.label_right}</span>
@@ -326,7 +339,11 @@ function ProductCard({ product }: { product: any }) {
                     }}
                   />
                 </div>
-                <p style={{ fontSize: 14, textAlign: "center", color: "#1E1E1E", marginTop: 6 }}>{def.name}</p>
+                {v.description && (
+                  <p style={{ fontSize: 14, fontWeight: 600, textAlign: "center", color: "#000", marginTop: 6 }}>
+                    {v.description}
+                  </p>
+                )}
               </div>
             );
           }
@@ -334,8 +351,8 @@ function ProductCard({ product }: { product: any }) {
           if (def.display_type === "icon") {
             return (
               <div key={idx} style={{ marginBottom: 16, textAlign: "center" }}>
-                <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{v.icon_text}</p>
-                <p style={{ fontSize: 14, color: "#1E1E1E" }}>{def.name}</p>
+                <p style={{ fontSize: 14, color: "#1E1E1E", marginBottom: 4 }}>{def.name}</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>{v.icon_text}</p>
               </div>
             );
           }
@@ -350,23 +367,6 @@ function ProductCard({ product }: { product: any }) {
           }
           return null;
         })}
-
-        {/* 상세페이지 보기 */}
-        {product.detail_url && (
-          <a
-            href={product.detail_url}
-            style={{
-              display: "block",
-              textAlign: "center",
-              fontSize: 12,
-              fontWeight: 500,
-              color: "#FF7B00",
-              marginBottom: 16,
-            }}
-          >
-            상세페이지 보기 →
-          </a>
-        )}
 
         {/* 구성 */}
         {product.configuration_text && (
