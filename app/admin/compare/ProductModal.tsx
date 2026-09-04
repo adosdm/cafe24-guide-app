@@ -21,6 +21,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
   const [price, setPrice] = useState("");
   const [tagline, setTagline] = useState("");
   const [detailUrl, setDetailUrl] = useState("");
+  const [linkedProductNo, setLinkedProductNo] = useState("");
   const [configurationText, setConfigurationText] = useState("");
   const [status, setStatus] = useState("draft");
   const [isRecommended, setIsRecommended] = useState(false);
@@ -65,6 +66,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
         setPrice(product.price ? String(product.price) : "");
         setTagline(product.tagline || "");
         setDetailUrl(product.detail_url || "");
+        setLinkedProductNo(product.linked_product_no || "");
         setConfigurationText(product.configuration_text || "");
         setStatus(product.status || "draft");
         setIsRecommended(product.is_recommended || false);
@@ -115,6 +117,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
       }
 
       setPrice(String(data.price));
+      setLinkedProductNo(String(data.product_no));
       setPriceFetchMessage(`"${data.product_name}" 가격을 불러왔습니다.`);
     } catch (err) {
       setPriceFetchMessage("불러오기 실패: " + String(err));
@@ -137,6 +140,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
       price: price ? Number(price) : null,
       tagline,
       detail_url: detailUrl,
+      linked_product_no: linkedProductNo || null,
       configuration_text: configurationText,
       status,
       is_recommended: isRecommended,

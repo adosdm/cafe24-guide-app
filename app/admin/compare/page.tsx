@@ -18,6 +18,8 @@ export default function ComparePage() {
   const [modalMode, setModalMode] = useState<null | "create" | "edit" | "view">(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState("");
 
   const loadStaticData = useCallback(async () => {
     const [{ data: cat }, { data: dev }, { data: sub }] = await Promise.all([
@@ -68,6 +70,24 @@ export default function ComparePage() {
     loadProducts();
   };
 
+  const handleSyncPrices = async () => {
+    setSyncing(true);
+    setSyncMessage("");
+    try {
+      const res = await fetch("/api/cafe24/sync-prices");
+      const data = await res.json();
+      if (!res.ok) {
+        setSyncMessage("동기화 실패: " + (data.error || "알 수 없는 오류"));
+      } else {
+        setSyncMessage(`동기화 완료 — 총 ${data.total}개 중 ${data.updated}개 가격 변경됨`);
+        loadProducts();
+      }
+    } catch (err) {
+      setSyncMessage("동기화 실패: " + String(err));
+    }
+    setSyncing(false);
+  };
+
   const openCreate = () => {
     setSelectedProductId(null);
     setModalMode("create");
@@ -96,11 +116,18 @@ export default function ComparePage() {
           <button onClick={() => setShowSubcategoryModal(true)} className="btn btn-soft">
             서브카테고리 관리
           </button>
+          <button onClick={handleSyncPrices} disabled={syncing} className="btn btn-soft">
+            {syncing ? "동기화 중..." : "전체 가격 동기화"}
+          </button>
           <button onClick={openCreate} className="btn btn-primary">
             + 제품 등록
           </button>
         </div>
       </div>
+
+      {syncMessage && (
+        <p style={{ fontSize: 13, color: "var(--ink-2)", marginTop: 8 }}>{syncMessage}</p>
+      )}
 
       <div className="stat-grid" style={{ margin: "24px 0" }}>
         <div className="stat-card">
