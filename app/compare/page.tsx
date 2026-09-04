@@ -71,8 +71,17 @@ export default function CustomerComparePage() {
             다양한 제품을 한눈에 비교해 보세요.
           </p>
 
-          {/* 카테고리 탭 */}
-          <div style={{ display: "flex", justifyContent: "center", gap: 32, marginBottom: 20 }}>
+          {/* 카테고리 탭 - 알약형 세그먼트 버튼 (기기탭보다 상위 위계) */}
+          <div
+            style={{
+              display: "inline-flex",
+              gap: 4,
+              background: "#F0F0F0",
+              padding: 4,
+              borderRadius: 999,
+              marginBottom: 20,
+            }}
+          >
             {categories.map((c) => {
               const active = c.id === categoryId;
               return (
@@ -80,11 +89,12 @@ export default function CustomerComparePage() {
                   key={c.id}
                   onClick={() => setCategoryId(c.id)}
                   style={{
-                    fontSize: 18,
-                    fontWeight: active ? 600 : 500,
-                    color: active ? "#1E2124" : "#bbb",
-                    textDecoration: active ? "underline" : "none",
-                    background: "none",
+                    padding: "10px 22px",
+                    borderRadius: 999,
+                    fontSize: 15,
+                    fontWeight: 700,
+                    background: active ? "#000" : "transparent",
+                    color: active ? "#fff" : "#888",
                     border: "none",
                   }}
                 >
@@ -153,6 +163,53 @@ export default function CustomerComparePage() {
         ))}
       </div>
     </div>
+  );
+}
+
+function RadarChart({ attrs }: { attrs: { name: string; value: number }[] }) {
+  const n = attrs.length;
+  if (n < 3) return null;
+
+  const size = 180;
+  const cx = size / 2;
+  const cy = size / 2;
+  const R = size / 2 - 32;
+
+  const angle = (i: number) => (Math.PI * 2 * i) / n - Math.PI / 2;
+  const point = (i: number, r: number): [number, number] => [
+    cx + r * Math.cos(angle(i)),
+    cy + r * Math.sin(angle(i)),
+  ];
+
+  const outerPts = attrs.map((_, i) => point(i, R).join(",")).join(" ");
+  const valuePts = attrs.map((a, i) => point(i, R * (Math.min(a.value, 4) / 4)).join(",")).join(" ");
+
+  return (
+    <svg width={size} height={size} style={{ display: "block", margin: "0 auto 16px" }}>
+      {/* 기준 도형 */}
+      <polygon points={outerPts} fill="#E3E3E3" fillOpacity={0.2} stroke="#C1C1C1" strokeWidth={1} />
+      {/* 중심에서 각 축으로의 격자선 */}
+      {attrs.map((_, i) => {
+        const [x, y] = point(i, R);
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="#C1C1C1" strokeOpacity={0.5} strokeWidth={0.5} />;
+      })}
+      {/* 실제 값 도형 */}
+      <polygon points={valuePts} fill="#DDAF91" fillOpacity={0.2} stroke="#FF7B00" strokeOpacity={0.8} strokeWidth={0.5} />
+      {/* 꼭짓점 점 */}
+      {attrs.map((a, i) => {
+        const [x, y] = point(i, R * (Math.min(a.value, 4) / 4));
+        return <circle key={i} cx={x} cy={y} r={2.5} fill="#FF7B00" />;
+      })}
+      {/* 축 라벨 */}
+      {attrs.map((a, i) => {
+        const [x, y] = point(i, R + 18);
+        return (
+          <text key={i} x={x} y={y} fontSize={11} fontWeight={700} fill="#808080" textAnchor="middle" dominantBaseline="middle">
+            {a.name}
+          </text>
+        );
+      })}
+    </svg>
   );
 }
 
@@ -234,6 +291,14 @@ function ProductCard({ product }: { product: any }) {
         )}
 
         <div style={{ borderTop: "1px solid #eee", marginBottom: 16 }} />
+
+        {/* 육각형 그래프 - 슬라이더형 속성 요약 */}
+        {(() => {
+          const sliderAttrs = attrs
+            .filter((v: any) => v.attribute_definition?.display_type === "slider")
+            .map((v: any) => ({ name: v.attribute_definition.name, value: v.gauge_value || 1 }));
+          return sliderAttrs.length >= 3 ? <RadarChart attrs={sliderAttrs} /> : null;
+        })()}
 
         {/* 속성값들 */}
         {attrs.map((v: any, idx: number) => {
