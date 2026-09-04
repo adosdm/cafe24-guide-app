@@ -273,23 +273,6 @@ function ProductCard({ product }: { product: any }) {
           </p>
         )}
 
-        {/* 상세페이지 보기 */}
-        {product.detail_url && (
-          <a
-            href={product.detail_url}
-            style={{
-              display: "block",
-              textAlign: "center",
-              fontSize: 12,
-              fontWeight: 500,
-              color: "#FF7B00",
-              marginBottom: 16,
-            }}
-          >
-            상세페이지 보기 →
-          </a>
-        )}
-
         <div style={{ borderTop: "1px solid #eee", marginBottom: 16 }} />
 
         {/* 육각형 그래프 - 슬라이더형 속성 요약 */}
@@ -360,19 +343,36 @@ function ProductCard({ product }: { product: any }) {
           if (def.display_type === "chip") {
             return (
               <div key={idx} style={{ marginBottom: 16, textAlign: "center" }}>
-                <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>{v.chip_title}</p>
-                <p style={{ fontSize: 12, color: "#999" }}>{v.chip_content}</p>
+                <p style={{ fontSize: 14, color: "#1E1E1E", marginBottom: 4 }}>{v.chip_title}</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>{v.chip_content}</p>
               </div>
             );
           }
           return null;
         })}
 
+        {/* 상세페이지 보기 */}
+        {product.detail_url && (
+          <a
+            href={product.detail_url}
+            style={{
+              display: "block",
+              textAlign: "center",
+              fontSize: 12,
+              fontWeight: 500,
+              color: "#FF7B00",
+              marginBottom: 16,
+            }}
+          >
+            상세페이지 보기 →
+          </a>
+        )}
+
         {/* 구성 */}
         {product.configuration_text && (
           <div style={{ textAlign: "center", marginBottom: 16 }}>
-            <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{product.configuration_text}</p>
-            <p style={{ fontSize: 14, color: "#1E1E1E" }}>구성</p>
+            <p style={{ fontSize: 14, color: "#1E1E1E", marginBottom: 4 }}>구성</p>
+            <p style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>{product.configuration_text}</p>
           </div>
         )}
 
