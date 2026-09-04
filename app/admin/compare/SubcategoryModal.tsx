@@ -215,13 +215,15 @@ export default function SubcategoryModal({ categories, onClose }: Props) {
                           />
                         </div>
                       )}
-                      <input
-                        placeholder="비교설명 가이드 (예: OO에 강한 느낌으로 작성)"
-                        value={attr.description_hint || ""}
-                        onChange={(e) => updateAttribute(attr.id, "description_hint", e.target.value)}
-                        className="input"
-                        style={{ height: 34, marginTop: 6 }}
-                      />
+                      {attr.display_type !== "chip" && (
+                        <input
+                          placeholder="비교설명 가이드 (예: OO에 강한 느낌으로 작성)"
+                          value={attr.description_hint || ""}
+                          onChange={(e) => updateAttribute(attr.id, "description_hint", e.target.value)}
+                          className="input"
+                          style={{ height: 34, marginTop: 6 }}
+                        />
+                      )}
                     </div>
                   ))}
                   <button onClick={addAttributeRow} className="btn btn-soft btn-block">
