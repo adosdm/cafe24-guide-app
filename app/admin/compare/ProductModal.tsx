@@ -300,78 +300,70 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
 
                     {def.display_type === "slider" && (
                       <div>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            fontSize: 13,
-                            color: "rgba(0,0,0,0.5)",
-                            marginBottom: 4,
-                          }}
-                        >
-                          <span>{def.label_left}</span>
-                          <span>{def.label_right}</span>
-                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontSize: 13, color: "rgba(0,0,0,0.5)", whiteSpace: "nowrap" }}>{def.label_left}</span>
 
-                        {/* 고객화면과 동일한 트랙 비주얼 + 실제 조작용 슬라이더 */}
-                        <div style={{ position: "relative", height: 24, marginBottom: 4 }}>
-                          <div
-                            style={{
-                              position: "absolute",
-                              top: 9,
-                              left: 0,
-                              right: 0,
-                              height: 6,
-                              borderRadius: 999,
-                              background: "#EFF1F2",
-                              border: "1px solid rgba(123,123,123,0.2)",
-                            }}
-                          >
+                          {/* 고객화면과 동일한 트랙 비주얼 + 실제 조작용 슬라이더 */}
+                          <div style={{ position: "relative", flex: 1, height: 24 }}>
                             <div
                               style={{
                                 position: "absolute",
+                                top: 9,
                                 left: 0,
-                                top: 0,
-                                height: "100%",
-                                width: `${((v.gauge_value || 2) / 4) * 100}%`,
+                                right: 0,
+                                height: 6,
                                 borderRadius: 999,
-                                background: "linear-gradient(to right, rgba(30,33,36,0.4), #1E2124)",
+                                background: "#EFF1F2",
+                                border: "1px solid rgba(123,123,123,0.2)",
                               }}
-                            />
-                            <div
+                            >
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  left: 0,
+                                  top: 0,
+                                  height: "100%",
+                                  width: `${((v.gauge_value || 2) / 4) * 100}%`,
+                                  borderRadius: 999,
+                                  background: "linear-gradient(to right, rgba(30,33,36,0.4), #1E2124)",
+                                }}
+                              />
+                              <div
+                                style={{
+                                  position: "absolute",
+                                  top: "50%",
+                                  left: `calc(${((v.gauge_value || 2) / 4) * 100}% - 1px)`,
+                                  transform: "translateY(-50%)",
+                                  width: 2,
+                                  height: 16,
+                                  background: "#1E2124",
+                                }}
+                              />
+                            </div>
+                            <input
+                              type="range"
+                              min={1}
+                              max={4}
+                              step={1}
+                              value={v.gauge_value || 2}
+                              disabled={readOnly}
+                              onChange={(e) => updateValue(def.id, "gauge_value", e.target.value)}
                               style={{
                                 position: "absolute",
-                                top: "50%",
-                                left: `calc(${((v.gauge_value || 2) / 4) * 100}% - 6px)`,
-                                transform: "translateY(-50%)",
-                                width: 12,
-                                height: 12,
-                                borderRadius: "50%",
-                                background: "#1E2124",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: 24,
+                                opacity: 0,
+                                cursor: readOnly ? "default" : "pointer",
+                                margin: 0,
                               }}
                             />
                           </div>
-                          <input
-                            type="range"
-                            min={1}
-                            max={4}
-                            step={1}
-                            value={v.gauge_value || 2}
-                            disabled={readOnly}
-                            onChange={(e) => updateValue(def.id, "gauge_value", e.target.value)}
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              width: "100%",
-                              height: 24,
-                              opacity: 0,
-                              cursor: readOnly ? "default" : "pointer",
-                              margin: 0,
-                            }}
-                          />
+
+                          <span style={{ fontSize: 13, color: "rgba(0,0,0,0.5)", whiteSpace: "nowrap" }}>{def.label_right}</span>
                         </div>
-                        <p className="help" style={{ marginTop: 0 }}>
+                        <p className="help" style={{ marginTop: 4 }}>
                           {v.gauge_value || 2} / 4
                         </p>
                         {def.description_hint && (

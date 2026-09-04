@@ -310,37 +310,45 @@ function ProductCard({ product }: { product: any }) {
             return (
               <div key={idx} style={{ marginBottom: 16 }}>
                 <p style={{ fontSize: 14, textAlign: "center", color: "#1E1E1E", marginBottom: 8 }}>{def.name}</p>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, color: "rgba(0,0,0,0.5)", marginBottom: 4 }}>
-                  <span>{def.label_left}</span>
-                  <span>{def.label_right}</span>
-                </div>
-                <div style={{ position: "relative", height: 6, borderRadius: 999, background: "#EFF1F2", border: "1px solid rgba(123,123,123,0.2)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontSize: 14, color: "rgba(0,0,0,0.5)", whiteSpace: "nowrap" }}>{def.label_left}</span>
                   <div
                     style={{
-                      position: "absolute",
-                      left: 0,
-                      top: 0,
-                      height: "100%",
-                      width: `${pct}%`,
+                      position: "relative",
+                      flex: 1,
+                      height: 6,
                       borderRadius: 999,
-                      background: "linear-gradient(to right, rgba(30,33,36,0.4), #1E2124)",
+                      background: "#EFF1F2",
+                      border: "1px solid rgba(123,123,123,0.2)",
                     }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: `calc(${pct}% - 6px)`,
-                      transform: "translateY(-50%)",
-                      width: 12,
-                      height: 12,
-                      borderRadius: "50%",
-                      background: "#1E2124",
-                    }}
-                  />
+                  >
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: 0,
+                        top: 0,
+                        height: "100%",
+                        width: `${pct}%`,
+                        borderRadius: 999,
+                        background: "linear-gradient(to right, rgba(30,33,36,0.4), #1E2124)",
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: `calc(${pct}% - 1px)`,
+                        transform: "translateY(-50%)",
+                        width: 2,
+                        height: 16,
+                        background: "#1E2124",
+                      }}
+                    />
+                  </div>
+                  <span style={{ fontSize: 14, color: "rgba(0,0,0,0.5)", whiteSpace: "nowrap" }}>{def.label_right}</span>
                 </div>
                 {def.description_hint && (
-                  <p style={{ fontSize: 14, fontWeight: 600, textAlign: "center", color: "#000", marginTop: 6 }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, textAlign: "center", color: "#000", marginTop: 8 }}>
                     {def.description_hint}
                   </p>
                 )}
