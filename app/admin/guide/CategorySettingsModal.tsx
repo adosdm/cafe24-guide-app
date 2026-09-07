@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import FileUploadButton from "@/components/FileUploadButton";
 
 type Props = {
   categories: any[];
@@ -52,27 +53,23 @@ export default function CategorySettingsModal({ categories, onClose, onSaved }: 
         </div>
         <div className="modal-body">
           {localCategories.map((c) => (
-            <div key={c.id} className="card" style={{ padding: 12, marginBottom: 10, display: "flex", gap: 12, alignItems: "center" }}>
-              {c.guide_image_url && <img src={c.guide_image_url} className="thumb" style={{ width: 56, height: 56 }} />}
-              <div style={{ flex: 1 }}>
-                <p style={{ fontWeight: 700, marginBottom: 6 }}>{c.name}</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) uploadImage(c.id, file);
-                  }}
+            <div key={c.id} className="card" style={{ padding: 12, marginBottom: 10 }}>
+              <p style={{ fontWeight: 700, marginBottom: 10 }}>{c.name}</p>
+              <div className="img-field" style={{ marginBottom: 10 }}>
+                {c.guide_image_url ? <img src={c.guide_image_url} className="img-thumb" /> : <div className="img-empty" />}
+                <FileUploadButton
+                  label="이미지 선택"
+                  onFileSelect={(file) => uploadImage(c.id, file)}
                 />
-                <label style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8, fontSize: 13 }}>
-                  <input
-                    type="checkbox"
-                    checked={c.guide_show_search ?? true}
-                    onChange={(e) => updateLocal(c.id, "guide_show_search", e.target.checked)}
-                  />
-                  이 카테고리 페이지에 검색창 노출
-                </label>
               </div>
+              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13 }}>
+                <input
+                  type="checkbox"
+                  checked={c.guide_show_search ?? true}
+                  onChange={(e) => updateLocal(c.id, "guide_show_search", e.target.checked)}
+                />
+                이 카테고리 페이지에 검색창 노출
+              </label>
             </div>
           ))}
         </div>

@@ -133,22 +133,40 @@ export default function ComparePage() {
         <div className="stat-card">
           <p className="stat-label">등록 제품</p>
           <p className="stat-value">{stats.total}개</p>
+          <div className="stat-bar">
+            <span className="stat-bar-fill" style={{ width: "100%" }} />
+          </div>
         </div>
         <div className="stat-card">
           <p className="stat-label">게시중</p>
           <p className="stat-value" style={{ color: "var(--green)" }}>
             {stats.published}개
           </p>
+          <div className="stat-bar">
+            <span
+              className="stat-bar-fill accent"
+              style={{ width: stats.total ? `${(stats.published / stats.total) * 100}%` : "0%" }}
+            />
+          </div>
         </div>
         <div className="stat-card">
           <p className="stat-label">임시저장</p>
           <p className="stat-value" style={{ color: "var(--ink-3)" }}>
             {stats.draft}개
           </p>
+          <div className="stat-bar">
+            <span
+              className="stat-bar-fill muted"
+              style={{ width: stats.total ? `${(stats.draft / stats.total) * 100}%` : "0%" }}
+            />
+          </div>
         </div>
         <div className="stat-card">
           <p className="stat-label">서브카테고리 수</p>
           <p className="stat-value">{stats.subcategoryCount}개</p>
+          <div className="stat-bar">
+            <span className="stat-bar-fill" style={{ width: "100%" }} />
+          </div>
         </div>
       </div>
 
@@ -169,13 +187,15 @@ export default function ComparePage() {
             </option>
           ))}
         </select>
-        <input
-          placeholder="제품명 검색"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          className="input"
-          style={{ flex: 1, height: 40 }}
-        />
+        <div className="search-box" style={{ flex: 1 }}>
+          <input
+            placeholder="제품명 검색"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            className="input"
+            style={{ height: 40, width: "100%" }}
+          />
+        </div>
       </div>
 
       <div className="card" style={{ overflow: "hidden" }}>

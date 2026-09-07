@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import FileUploadButton from "@/components/FileUploadButton";
 
 const MAX_IMAGES = 5;
 
@@ -88,8 +89,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
     setValues((prev) => ({ ...prev, [attrId]: { ...prev[attrId], [field]: val } }));
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+  const handleFileSelect = (files: File[]) => {
     const totalCount = existingImages.length + newFiles.length + files.length;
     if (totalCount > MAX_IMAGES) setMessage(`이미지는 최대 ${MAX_IMAGES}장까지만 가능합니다.`);
     setNewFiles([...newFiles, ...files].slice(0, MAX_IMAGES - existingImages.length));
@@ -215,32 +215,34 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
             <p>불러오는 중...</p>
           ) : (
             <>
-              <div className="field">
-                <label>
-                  서브카테고리 <span className="req">*</span>
-                </label>
-                <select value={subcategoryId} onChange={(e) => setSubcategoryId(e.target.value)} disabled={readOnly} className="select">
-                  <option value="">선택하세요</option>
-                  {subcategories.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      [{s.category?.name}] {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <div className="field-grid">
+                <div className="field">
+                  <label>
+                    서브카테고리 <span className="req">*</span>
+                  </label>
+                  <select value={subcategoryId} onChange={(e) => setSubcategoryId(e.target.value)} disabled={readOnly} className="select">
+                    <option value="">선택하세요</option>
+                    {subcategories.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        [{s.category?.name}] {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="field">
-                <label>
-                  기기 <span className="req">*</span>
-                </label>
-                <select value={deviceId} onChange={(e) => setDeviceId(e.target.value)} disabled={readOnly} className="select">
-                  <option value="">선택하세요</option>
-                  {devices.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="field">
+                  <label>
+                    기기 <span className="req">*</span>
+                  </label>
+                  <select value={deviceId} onChange={(e) => setDeviceId(e.target.value)} disabled={readOnly} className="select">
+                    <option value="">선택하세요</option>
+                    {devices.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="field">
@@ -333,7 +335,9 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                     </div>
                   ))}
                 </div>
-                {!readOnly && <input type="file" accept="image/*" multiple onChange={handleFileSelect} />}
+                {!readOnly && (
+                  <FileUploadButton label="이미지 추가" accept="image/*" multiple onFilesSelect={handleFileSelect} />
+                )}
               </div>
 
               {attributeDefs.map((def) => {

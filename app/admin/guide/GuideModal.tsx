@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import FileUploadButton from "@/components/FileUploadButton";
 
 const MAX_VARIANTS = 4;
 const MAX_TIPS = 4;
@@ -251,33 +252,41 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
           ) : (
             <>
               {/* 기본 정보 */}
-              <div className="field">
-                <label>
-                  카테고리 <span className="req">*</span>
-                </label>
-                <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} disabled={readOnly} className="select">
-                  <option value="">선택하세요</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <div className="field-grid">
+                <div className="field">
+                  <label>
+                    카테고리 <span className="req">*</span>
+                  </label>
+                  <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} disabled={readOnly} className="select">
+                    <option value="">선택하세요</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="field">
-                <label>
-                  제목 <span className="req">*</span>
-                </label>
-                <input value={title} onChange={(e) => setTitle(e.target.value)} disabled={readOnly} className="input" placeholder="예: 신지글래스 2.5D 부착가이드" />
+                <div className="field">
+                  <label>
+                    제목 <span className="req">*</span>
+                  </label>
+                  <input value={title} onChange={(e) => setTitle(e.target.value)} disabled={readOnly} className="input" placeholder="예: 신지글래스 2.5D 부착가이드" />
+                </div>
               </div>
 
               <div className="field">
                 <label>대표 썸네일</label>
-                {thumbnailUrl && <img src={thumbnailUrl} className="thumb" style={{ width: 80, height: 80, marginBottom: 8 }} />}
-                {!readOnly && (
-                  <input type="file" accept="image/*" onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)} />
-                )}
+                <div className="img-field">
+                  {thumbnailUrl ? (
+                    <img src={thumbnailUrl} className="img-thumb" />
+                  ) : (
+                    <div className="img-empty" />
+                  )}
+                  {!readOnly && (
+                    <FileUploadButton label="이미지 선택" onFileSelect={(file) => setThumbnailFile(file)} />
+                  )}
+                </div>
               </div>
 
               <div className="field">
@@ -334,15 +343,12 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
                       className="input"
                       style={{ height: 36, marginBottom: 6 }}
                     />
-                    <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6 }}>
-                      {v.thumbnail_url && <img src={v.thumbnail_url} className="thumb" style={{ width: 48, height: 48 }} />}
+                    <div className="img-field" style={{ marginBottom: 6 }}>
+                      {v.thumbnail_url ? <img src={v.thumbnail_url} className="img-thumb" /> : <div className="img-empty" />}
                       {!readOnly && (
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
+                        <FileUploadButton
+                          label="썸네일 선택"
+                          onFileSelect={async (file) => {
                             const url = await uploadFile(file, "guide/variant");
                             if (url) updateVariant(idx, "thumbnail_url", url);
                           }}
@@ -410,15 +416,12 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
                       className="input"
                       style={{ height: 36, marginBottom: 6 }}
                     />
-                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                      {c.thumbnail_url && <img src={c.thumbnail_url} className="thumb" style={{ width: 48, height: 48 }} />}
+                    <div className="img-field">
+                      {c.thumbnail_url ? <img src={c.thumbnail_url} className="img-thumb" /> : <div className="img-empty" />}
                       {!readOnly && (
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
+                        <FileUploadButton
+                          label="썸네일 선택"
+                          onFileSelect={async (file) => {
                             const url = await uploadFile(file, "guide/content");
                             if (url) updateContent(idx, "thumbnail_url", url);
                           }}
@@ -478,15 +481,12 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
                       className="input"
                       style={{ height: 36, marginBottom: 6 }}
                     />
-                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                      {t.thumbnail_url && <img src={t.thumbnail_url} className="thumb" style={{ width: 48, height: 48 }} />}
+                    <div className="img-field">
+                      {t.thumbnail_url ? <img src={t.thumbnail_url} className="img-thumb" /> : <div className="img-empty" />}
                       {!readOnly && (
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
+                        <FileUploadButton
+                          label="썸네일 선택"
+                          onFileSelect={async (file) => {
                             const url = await uploadFile(file, "guide/tip");
                             if (url) updateTip(idx, "thumbnail_url", url);
                           }}
