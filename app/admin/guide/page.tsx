@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import GuideModal from "./GuideModal";
+import CategorySettingsModal from "./CategorySettingsModal";
 
 export default function GuidePage() {
   const [guides, setGuides] = useState<any[]>([]);
@@ -14,6 +15,7 @@ export default function GuidePage() {
 
   const [modalMode, setModalMode] = useState<null | "create" | "edit" | "view">(null);
   const [selectedGuideId, setSelectedGuideId] = useState<string | null>(null);
+  const [showCategorySettings, setShowCategorySettings] = useState(false);
 
   const loadStaticData = useCallback(async () => {
     const [{ data: cat }, { data: dev }] = await Promise.all([
@@ -79,9 +81,14 @@ export default function GuidePage() {
           <h1 className="page-title">가이드 관리</h1>
           <p className="page-desc">카테고리별 부착 가이드를 등록하고 관리합니다.</p>
         </div>
-        <button onClick={openCreate} className="btn btn-primary">
-          + 가이드 등록
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => setShowCategorySettings(true)} className="btn btn-soft">
+            카테고리 설정
+          </button>
+          <button onClick={openCreate} className="btn btn-primary">
+            + 가이드 등록
+          </button>
+        </div>
       </div>
 
       <div className="stat-grid" style={{ margin: "24px 0" }}>
@@ -177,6 +184,10 @@ export default function GuidePage() {
           </tbody>
         </table>
       </div>
+
+      {showCategorySettings && (
+        <CategorySettingsModal categories={categories} onClose={() => setShowCategorySettings(false)} onSaved={loadStaticData} />
+      )}
 
       {modalMode && (
         <GuideModal

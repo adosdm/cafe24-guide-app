@@ -23,6 +23,7 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
   const [linkedProductNo, setLinkedProductNo] = useState("");
   const [status, setStatus] = useState("draft");
   const [showInBanner, setShowInBanner] = useState(false);
+  const [groupLabel, setGroupLabel] = useState("");
 
   const [qnaBoardNo, setQnaBoardNo] = useState("");
   const [qnaKeyword, setQnaKeyword] = useState("");
@@ -53,6 +54,7 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
         setLinkedProductNo(guide.linked_product_no || "");
         setStatus(guide.status || "draft");
         setShowInBanner(guide.show_in_banner || false);
+        setGroupLabel(guide.group_label || "");
         setQnaBoardNo(guide.qna_board_no || "");
         setQnaKeyword(guide.qna_keyword || "");
       }
@@ -158,6 +160,7 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
       linked_product_no: linkedProductNo || null,
       status,
       show_in_banner: showInBanner,
+      group_label: groupLabel || null,
       qna_board_no: qnaBoardNo || null,
       qna_keyword: qnaKeyword || null,
     };
@@ -280,6 +283,11 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
               <div className="field">
                 <label>연동 상품번호 (선택)</label>
                 <input value={linkedProductNo} onChange={(e) => setLinkedProductNo(e.target.value)} disabled={readOnly} className="input" />
+              </div>
+
+              <div className="field">
+                <label>소그룹 라벨 (전체가이드 페이지에서 묶어 보여줄 제목, 예: 강화유리)</label>
+                <input value={groupLabel} onChange={(e) => setGroupLabel(e.target.value)} disabled={readOnly} className="input" placeholder="예: 강화유리, 필름" />
               </div>
 
               <div className="field" style={{ display: "flex", gap: 24, alignItems: "center" }}>
