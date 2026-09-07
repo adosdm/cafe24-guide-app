@@ -161,7 +161,7 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
       linked_product_no: linkedProductNo || null,
       status,
       show_in_banner: showInBanner,
-      group_label: groupLabel || null,
+      group_label: groupLabel.trim() || null,
       qna_board_no: qnaBoardNo || null,
       qna_keyword: qnaKeyword || null,
     };
@@ -509,8 +509,8 @@ export default function GuideModal({ mode, guideId, categories, onClose, onSaved
                   이 가이드 상세페이지 하단 Q&A는 여기 등록한 값 기준으로 카페24 게시판 글을 그때그때 불러옵니다.
                 </p>
                 <div className="field">
-                  <label>게시판 번호</label>
-                  <input value={qnaBoardNo} onChange={(e) => setQnaBoardNo(e.target.value)} disabled={readOnly} className="input" placeholder="예: 4" />
+                  <label>게시판 번호 (여러 개면 콤마로 구분)</label>
+                  <input value={qnaBoardNo} onChange={(e) => setQnaBoardNo(e.target.value)} disabled={readOnly} className="input" placeholder="예: 4  또는  4,7,9" />
                 </div>
                 <div className="field">
                   <label>검색 키워드 (선택 — 비워두면 게시판 글 전체)</label>

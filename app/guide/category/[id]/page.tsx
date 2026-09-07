@@ -36,7 +36,7 @@ export default function GuideCategoryPage() {
   // group_label 기준으로 그룹핑 (없으면 "전체"로 묶음)
   const groups: Record<string, any[]> = {};
   filtered.forEach((g) => {
-    const key = g.group_label || "전체";
+    const key = (g.group_label || "전체").trim() || "전체";
     if (!groups[key]) groups[key] = [];
     groups[key].push(g);
   });

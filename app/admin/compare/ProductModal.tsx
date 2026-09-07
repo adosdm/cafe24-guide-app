@@ -320,7 +320,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                     <div key={img.id} style={{ position: "relative" }}>
                       <img src={img.image_url} className="thumb" style={{ width: 72, height: 72 }} />
                       {!readOnly && (
-                        <button onClick={() => removeExistingImage(img.id)} className="x" style={imgRemoveStyle}>
+                        <button onClick={() => removeExistingImage(img.id)} className="img-remove">
                           ✕
                         </button>
                       )}
@@ -329,7 +329,7 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
                   {newFiles.map((file, idx) => (
                     <div key={idx} style={{ position: "relative" }}>
                       <img src={URL.createObjectURL(file)} className="thumb" style={{ width: 72, height: 72 }} />
-                      <button onClick={() => removeNewFile(idx)} className="x" style={imgRemoveStyle}>
+                      <button onClick={() => removeNewFile(idx)} className="img-remove">
                         ✕
                       </button>
                     </div>
@@ -483,14 +483,3 @@ export default function ProductModal({ mode, productId, subcategories, devices, 
     </div>
   );
 }
-
-const imgRemoveStyle: React.CSSProperties = {
-  position: "absolute",
-  top: -6,
-  right: -6,
-  width: 20,
-  height: 20,
-  background: "var(--ink)",
-  color: "white",
-  fontSize: 10,
-};
